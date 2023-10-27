@@ -1,4 +1,6 @@
-[![Jitpack package repository - ESCPOS-ThermalPrinter-Android v3.2.0](https://jitpack.io/v/DantSu/ESCPOS-ThermalPrinter-Android.svg)](https://jitpack.io/#DantSu/ESCPOS-ThermalPrinter-Android/3.2.0)
+[![Jitpack package repository - ESCPOS-ThermalPrinter-Android v3.3.0](https://jitpack.io/v/DantSu/ESCPOS-ThermalPrinter-Android.svg)](https://jitpack.io/#DantSu/ESCPOS-ThermalPrinter-Android/3.3.0)
+[![](https://jitpack.io/v/DantSu/ESCPOS-ThermalPrinter-Android/month.svg)](https://jitpack.io/#DantSu/ESCPOS-ThermalPrinter-Android/3.3.0)
+[![](https://jitpack.io/v/DantSu/ESCPOS-ThermalPrinter-Android/week.svg)](https://jitpack.io/#DantSu/ESCPOS-ThermalPrinter-Android/3.3.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # Android library for ESC/POS Thermal Printer
@@ -60,7 +62,7 @@ To test this library, it's pretty simple !
 
 ## Installation
 
-**Step 1.** Add the [JitPack](https://jitpack.io/#DantSu/ESCPOS-ThermalPrinter-Android/3.2.0) repository to your build file. Add it in your root `/build.gradle` at the end of repositories:
+**Step 1.** Add the [JitPack](https://jitpack.io/#DantSu/ESCPOS-ThermalPrinter-Android/3.3.0) repository to your build file. Add it in your root `/build.gradle` at the end of repositories:
 
 ```
 allprojects {
@@ -76,7 +78,7 @@ allprojects {
 ```
 dependencies {
     ...
-    implementation 'com.github.DantSu:ESCPOS-ThermalPrinter-Android:3.2.0'
+    implementation 'com.github.DantSu:ESCPOS-ThermalPrinter-Android:3.3.0'
 }
 ```
 
@@ -84,14 +86,14 @@ dependencies {
 
 ### Bluetooth permission
 
-Be sure to have `<uses-permission android:name="android.permission.BLUETOOTH" />`, `<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />`, `<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />`, `<uses-permission android:name="android.permission.BLUETOOTH_SCAN" />` in your `AndroidMenifest.xml`.
+Be sure to have `<uses-permission android:name="android.permission.BLUETOOTH" />`, `<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />`, `<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />`, `<uses-permission android:name="android.permission.BLUETOOTH_SCAN" />` in your `AndroidManifest.xml`.
 
 Also, you have to check the bluetooth permission in your app like this :
 
 ```java
-if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S && ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, MainActivity.PERMISSION_BLUETOOTH);
-} else if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
+} else if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S && ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, MainActivity.PERMISSION_BLUETOOTH_ADMIN);
 } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S && ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, MainActivity.PERMISSION_BLUETOOTH_CONNECT);
@@ -135,19 +137,19 @@ printer
         "[L]Tel : +33801201456\n" +
         "[L]\n" +
         "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-        "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>"
+        "[C]<qrcode size='20'>https://dantsu.com/</qrcode>"
     );
 ```
 
 Below a picture of the receipt printed with the code above :
 
-![Example of a printed receipt](http://www.developpeur-web.dantsu.com/files/librairie/receipt-thermal-printer.png?1)
+![Example of a printed receipt](https://dantsu.com/files/receipt-thermal-printer.png?1)
 
 ## TCP
 
 ### TCP permission
 
-Be sure to have `<uses-permission android:name="android.permission.INTERNET"/>` in your `AndroidMenifest.xml`.
+Be sure to have `<uses-permission android:name="android.permission.INTERNET"/>` in your `AndroidManifest.xml`.
 
 ### TCP code example
 
@@ -185,7 +187,7 @@ new Thread(new Runnable() {
                     "[L]Tel : +33801201456\n" +
                     "[L]\n" +
                     "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-                    "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>"
+                    "[C]<qrcode size='20'>https://dantsu.com/</qrcode>"
                 );
         } catch (Exception e) {
             e.printStackTrace();
@@ -198,7 +200,7 @@ new Thread(new Runnable() {
 
 ### USB permission
 
-Be sure to have `<uses-feature android:name="android.hardware.usb.host" />` in your `AndroidMenifest.xml`.
+Be sure to have `<uses-feature android:name="android.hardware.usb.host" />` in your `AndroidManifest.xml`.
 
 You have to check the USB permission in your app like this :
 
@@ -271,7 +273,7 @@ printer
         "[L]Tel : +33801201456\n" +
         "[L]\n" +
         "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-        "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>"
+        "[C]<qrcode size='20'>https://dantsu.com/</qrcode>"
     );
 ```
 
@@ -389,7 +391,7 @@ Prints a barcode 128 (height: 10mm, width: ~40mm, text: displayed above).
 
 `<qrcode></qrcode>` tag allows you to print a QR code. Inside the tag you need to write the QR code data.
 
-- `<qrcode>http://www.developpeur-web.dantsu.com/</qrcode>` :
+- `<qrcode>https://dantsu.com/</qrcode>` :
 Prints a QR code with a width and height of 20 millimeters.
 - `<qrcode size='25'>123456789</qrcode>` :
 Prints a QR code with a width and height of 25 millimeters.
@@ -521,29 +523,33 @@ Print a formatted text, feed paper (`dotsFeedPaper` dots), cut the paper and ope
 - **param** `int dotsFeedPaper` : Distance feed paper at the end.
 - **return** `Printer` : Fluent interface
 
-#### Method : `bitmapToBytes(Bitmap bitmap)`
+#### Method : `bitmapToBytes(Bitmap bitmap, boolean gradient)`
 Convert Bitmap object to ESC/POS image.
 - **param** `Bitmap bitmap` : Instance of Bitmap
+- **param** `boolean gradient` : `false` Black and white image, `true` Grayscale image
 - **return** `byte[]` : Bytes contain the image in ESC/POS command
 
 ### Class : `com.dantsu.escposprinter.textparser.PrinterTextParserImg`
 
-#### **Static** Method : `bitmapToHexadecimalString(Printer printer, Drawable drawable)`
+#### **Static** Method : `bitmapToHexadecimalString(Printer printer, Drawable drawable [, boolean gradient])`
 Convert Drawable instance to a hexadecimal string of the image data.
 - **param** `Printer printer` : A Printer instance that will print the image.
 - **param** `Drawable drawable` : Drawable instance to be converted.
+- **param** `boolean gradient` *(optional)* : `false` Black and white image, `true` Grayscale image (Default : `true`)
 - **return** `String` : A hexadecimal string of the image data. Empty string if Drawable cannot be cast to BitmapDrawable.
 
-#### **Static** Method : `bitmapToHexadecimalString(Printer printer, BitmapDrawable bitmapDrawable)`
+#### **Static** Method : `bitmapToHexadecimalString(Printer printer, BitmapDrawable bitmapDrawable [, boolean gradient])`
 Convert BitmapDrawable instance to a hexadecimal string of the image data.
 - **param** `Printer printer` : A Printer instance that will print the image.
 - **param** `BitmapDrawable bitmapDrawable` : BitmapDrawable instance to be converted.
+- **param** `boolean gradient` *(optional)* : `false` Black and white image, `true` Grayscale image (Default : `true`)
 - **return** `String` : A hexadecimal string of the image data.
 
-#### **Static** Method : `bitmapToHexadecimalString(Printer printer, Bitmap bitmap)`
+#### **Static** Method : `bitmapToHexadecimalString(Printer printer, Bitmap bitmap [, boolean gradient])`
 Convert Bitmap instance to a hexadecimal string of the image data.
 - **param** `Printer printer` : A Printer instance that will print the image.
 - **param** `Bitmap bitmap` : Bitmap instance to be converted.
+- **param** `boolean gradient` *(optional)* : `false` Black and white image, `true` Grayscale image (Default : `true`)
 - **return** `String` : A hexadecimal string of the image data.
 
 #### **Static** Method : `bytesToHexadecimalString(byte[] bytes)`
