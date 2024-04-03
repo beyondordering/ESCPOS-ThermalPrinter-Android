@@ -291,9 +291,6 @@ public class EscPosPrinterCommands {
      * @param size QR code dots size
      * @return Bytes contain the QR Code in ESC/POS command
      */
-
-    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
-
     public static byte[] QRCodeDataToNativeBytes(String data, int size) throws EscPosBarcodeException {
         byte MODEL_1 = 0x31;
         byte MODEL_2 = 0x32;
