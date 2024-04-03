@@ -1,6 +1,7 @@
 package com.dantsu.escposprinter;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -291,6 +292,18 @@ public class EscPosPrinterCommands {
      * @param size QR code dots size
      * @return Bytes contain the QR Code in ESC/POS command
      */
+
+    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
     public static byte[] QRCodeDataToNativeBytes(String data, int size) throws EscPosBarcodeException {
         byte MODEL_1 = 0x31;
         byte MODEL_2 = 0x32;
@@ -332,6 +345,8 @@ public class EscPosPrinterCommands {
         qrBytes.put(dataBytes);
         qrBytes.put(contentBytes);
         qrBytes.put(symbolDataBytes);
+
+        Log.e("PRINT_QR", bytesToHex(qrBytes.array()));
 
         return qrBytes.array();
     }
