@@ -10,7 +10,7 @@ import java.util.Hashtable;
 
 public class PrinterTextParserQRCode extends PrinterTextParserImg {
 
-    private static byte[] initConstructor(PrinterTextParserColumn printerTextParserColumn,
+    private static byte[] initConstructor(PrinterTextParserColumn printerTextParserColumn, String textAlign,
                                           Hashtable<String, String> qrCodeAttributes, String data) throws EscPosParserException, EscPosBarcodeException {
         EscPosPrinter printer = printerTextParserColumn.getLine().getTextParser().getPrinter();
         data = data.trim();
@@ -30,7 +30,7 @@ public class PrinterTextParserQRCode extends PrinterTextParserImg {
         }
 
         return qrCodeAttributes.containsKey(PrinterTextParser.ATTR_QRCODE_NATIVE) ?
-                EscPosPrinterCommands.QRCodeDataToNativeBytes(data, size) :
+                EscPosPrinterCommands.QRCodeDataToNativeBytes(data, size, textAlign) :
                 EscPosPrinterCommands.QRCodeDataToBytes(data, size);
     }
 
@@ -39,7 +39,7 @@ public class PrinterTextParserQRCode extends PrinterTextParserImg {
         super(
                 printerTextParserColumn,
                 textAlign,
-                PrinterTextParserQRCode.initConstructor(printerTextParserColumn, qrCodeAttributes, data)
+                PrinterTextParserQRCode.initConstructor(printerTextParserColumn, textAlign, qrCodeAttributes, data)
         );
     }
 }
