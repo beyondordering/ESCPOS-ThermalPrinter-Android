@@ -305,9 +305,9 @@ public class EscPosPrinterCommands {
         byte[] contentBytes = data.getBytes();
         byte width = (byte) size;
         byte model = MODEL_2;
-        byte errorCorrectionLevel = ERROR_CORRECTION_LEVEL_M;
+        byte errorCorrectionLevel = ERROR_CORRECTION_LEVEL_H;
 
-        byte[] modelBytes = new byte[]{ 0x1d, 0x28, 0x6b, 0x04, 0x00, 0x31, 0x41, model, 0x00 };
+        //byte[] modelBytes = new byte[]{ 0x1d, 0x28, 0x6b, 0x04, 0x00, 0x31, 0x41, model, 0x00 };
         byte[] sizeBytes = new byte[]{ 0x1d, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x43, width };
         byte[] errorCorrectionLevelBytes = new byte[]{ 0x1d, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x45, errorCorrectionLevel };
 
@@ -316,10 +316,10 @@ public class EscPosPrinterCommands {
         int pH = total / 256;
 
         byte[] dataBytes = new byte[]{ 0x1d, 0x28, 0x6b, (byte) pL, (byte) pH, 0x31, 0x50, 0x30 };
-        byte[] symbolDataBytes = new byte[]{ 0x1d, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x51, 0x00 };
+        byte[] symbolDataBytes = new byte[]{ 0x1d, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x51, 0x30 };
 
         ByteBuffer qrBytes = ByteBuffer.allocate(
-                modelBytes.length +
+                //modelBytes.length +
                         sizeBytes.length +
                         errorCorrectionLevelBytes.length +
                         dataBytes.length +
@@ -327,7 +327,7 @@ public class EscPosPrinterCommands {
                         symbolDataBytes.length
         );
 
-        qrBytes.put(modelBytes);
+        //qrBytes.put(modelBytes);
         qrBytes.put(sizeBytes);
         qrBytes.put(errorCorrectionLevelBytes);
         qrBytes.put(dataBytes);
