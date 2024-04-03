@@ -1,7 +1,6 @@
 package com.dantsu.escposprinter;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
