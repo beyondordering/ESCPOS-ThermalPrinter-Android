@@ -12,6 +12,7 @@ import com.dantsu.escposprinter.connection.DeviceConnection;
 import com.dantsu.escposprinter.exceptions.EscPosBarcodeException;
 import com.dantsu.escposprinter.exceptions.EscPosConnectionException;
 import com.dantsu.escposprinter.exceptions.EscPosEncodingException;
+import com.dantsu.escposprinter.textparser.PrinterTextParser;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
@@ -77,8 +78,14 @@ public class EscPosPrinterCommands {
     public static final int BARCODE_TEXT_POSITION_ABOVE = 1;
     public static final int BARCODE_TEXT_POSITION_BELOW = 2;
 
-    public static final int QRCODE_1 = 49;
-    public static final int QRCODE_2 = 50;
+    public static final byte QRCODE_MODEL_1 = 0x31;
+    public static final byte QRCODE_MODEL_2 = 0x32;
+    public static final byte QRCODE_MICRO = 0x33;
+
+    public static final byte QRCODE_ERROR_CORRECTION_LEVEL_L = 0x30; // 7%
+    public static final byte QRCODE_ERROR_CORRECTION_LEVEL_M = 0x31; // 15%
+    public static final byte QRCODE_ERROR_CORRECTION_LEVEL_Q = 0x32; // 25%
+    public static final byte QRCODE_ERROR_CORRECTION_LEVEL_H = 0x33; // 30%
 
     private DeviceConnection printerConnection;
     private EscPosCharsetEncoding charsetEncoding;
@@ -292,33 +299,44 @@ public class EscPosPrinterCommands {
      * @param size QR code dots size
      * @return Bytes contain the QR Code in ESC/POS command
      */
-    public static byte[] QRCodeDataToNativeBytes(String data, int size) throws EscPosBarcodeException {
-        byte MODEL_1 = 0x31;
-        byte MODEL_2 = 0x32;
-        byte MICRO = 0x33;
-
-        byte ERROR_CORRECTION_LEVEL_L = 0x30; // 7%
-        byte ERROR_CORRECTION_LEVEL_M = 0x31; // 15%
-        byte ERROR_CORRECTION_LEVEL_Q = 0x32; // 25%
-        byte ERROR_CORRECTION_LEVEL_H = 0x33; // 30%
-
+    public static byte[] QRCodeDataToNativeBytes(String data, int size, String align) throws EscPosBarcodeException {
         byte[] contentBytes = data.getBytes();
-        byte width = (byte) size;
-        byte model = MODEL_2;
-        byte errorCorrectionLevel = ERROR_CORRECTION_LEVEL_H;
-
-        //byte[] modelBytes = new byte[]{ 0x1d, 0x28, 0x6b, 0x04, 0x00, 0x31, 0x41, model, 0x00 };
-        byte[] sizeBytes = new byte[]{ 0x1d, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x43, width };
-        byte[] errorCorrectionLevelBytes = new byte[]{ 0x1d, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x45, errorCorrectionLevel };
-
         int total = contentBytes.length + 3;
         int pL = total % 256;
         int pH = total / 256;
 
+        byte width = (byte) size;
+
+        // Alignment
+        byte[] alignBytes = EscPosPrinterCommands.TEXT_ALIGN_LEFT;
+        switch (align) {
+            case PrinterTextParser.TAGS_ALIGN_CENTER:
+                alignBytes = EscPosPrinterCommands.TEXT_ALIGN_CENTER;
+                break;
+            case PrinterTextParser.TAGS_ALIGN_RIGHT:
+                alignBytes = EscPosPrinterCommands.TEXT_ALIGN_RIGHT;
+                break;
+        }
+
+        // Model
+        //byte model = EscPosPrinterCommands.QRCODE_MODEL_2;
+        //byte[] modelBytes = new byte[]{ 0x1d, 0x28, 0x6b, 0x04, 0x00, 0x31, 0x41, model, 0x00 };
+
+        // Size
+        byte[] sizeBytes = new byte[]{ 0x1d, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x43, width };
+
+        // Error Correction Level
+        byte errorCorrectionLevel = EscPosPrinterCommands.QRCODE_ERROR_CORRECTION_LEVEL_H;
+        byte[] errorCorrectionLevelBytes = new byte[]{ 0x1d, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x45, errorCorrectionLevel };
+
+        // Data
         byte[] dataBytes = new byte[]{ 0x1d, 0x28, 0x6b, (byte) pL, (byte) pH, 0x31, 0x50, 0x30 };
+
+        // Symbol Data
         byte[] symbolDataBytes = new byte[]{ 0x1d, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x51, 0x30 };
 
         ByteBuffer qrBytes = ByteBuffer.allocate(
+                alignBytes.length +
                 //modelBytes.length +
                         sizeBytes.length +
                         errorCorrectionLevelBytes.length +
@@ -327,6 +345,7 @@ public class EscPosPrinterCommands {
                         symbolDataBytes.length
         );
 
+        qrBytes.put(alignBytes);
         //qrBytes.put(modelBytes);
         qrBytes.put(sizeBytes);
         qrBytes.put(errorCorrectionLevelBytes);
