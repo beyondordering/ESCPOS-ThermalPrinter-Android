@@ -29,7 +29,9 @@ public class PrinterTextParserQRCode extends PrinterTextParserImg {
             }
         }
 
-        return EscPosPrinterCommands.QRCodeDataToBytes(data, size);
+        return qrCodeAttributes.containsKey(PrinterTextParser.ATTR_QRCODE_NATIVE) ?
+                EscPosPrinterCommands.QRCodeDataToNativeBytes(data, size) :
+                EscPosPrinterCommands.QRCodeDataToBytes(data, size);
     }
 
     public PrinterTextParserQRCode(PrinterTextParserColumn printerTextParserColumn, String textAlign,

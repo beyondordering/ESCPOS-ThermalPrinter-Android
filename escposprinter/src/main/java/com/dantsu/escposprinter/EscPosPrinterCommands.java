@@ -3,6 +3,7 @@ package com.dantsu.escposprinter;
 import android.graphics.Bitmap;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.EnumMap;
 
@@ -281,6 +282,58 @@ public class EscPosPrinterCommands {
         }
 
         return imageBytes;
+    }
+
+    /**
+     * Convert a string to QR Code byte array compatible with ESC/POS printer that supports native QR Code printing.
+     *
+     * @param data String data to convert in QR Code
+     * @param size QR code dots size
+     * @return Bytes contain the QR Code in ESC/POS command
+     */
+    public static byte[] QRCodeDataToNativeBytes(String data, int size) throws EscPosBarcodeException {
+        byte MODEL_1 = 0x31;
+        byte MODEL_2 = 0x32;
+        byte MICRO = 0x33;
+
+        byte ERROR_CORRECTION_LEVEL_L = 0x30; // 7%
+        byte ERROR_CORRECTION_LEVEL_M = 0x31; // 15%
+        byte ERROR_CORRECTION_LEVEL_Q = 0x32; // 25%
+        byte ERROR_CORRECTION_LEVEL_H = 0x33; // 30%
+
+        byte[] contentBytes = data.getBytes();
+        byte width = (byte) size;
+        byte model = MODEL_2;
+        byte errorCorrectionLevel = ERROR_CORRECTION_LEVEL_M;
+
+        byte[] modelBytes = new byte[]{ 0x1d, 0x28, 0x6b, 0x04, 0x00, 0x31, 0x41, model, 0x00 };
+        byte[] sizeBytes = new byte[]{ 0x1d, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x43, width };
+        byte[] errorCorrectionLevelBytes = new byte[]{ 0x1d, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x45, errorCorrectionLevel };
+
+        int total = contentBytes.length + 3;
+        int pL = total % 256;
+        int pH = total / 256;
+
+        byte[] dataBytes = new byte[]{ 0x1d, 0x28, 0x6b, (byte) pL, (byte) pH, 0x31, 0x50, 0x30 };
+        byte[] symbolDataBytes = new byte[]{ 0x1d, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x51, 0x00 };
+
+        ByteBuffer qrBytes = ByteBuffer.allocate(
+                modelBytes.length +
+                        sizeBytes.length +
+                        errorCorrectionLevelBytes.length +
+                        dataBytes.length +
+                        contentBytes.length +
+                        symbolDataBytes.length
+        );
+
+        qrBytes.put(modelBytes);
+        qrBytes.put(sizeBytes);
+        qrBytes.put(errorCorrectionLevelBytes);
+        qrBytes.put(dataBytes);
+        qrBytes.put(contentBytes);
+        qrBytes.put(symbolDataBytes);
+
+        return qrBytes.array();
     }
 
     /**
